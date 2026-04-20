@@ -11,10 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write # Needed to commit the seen_products.json back to the repo
+    
+    # Force the runner to use Node 24 for all actions to resolve deprecation warnings
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.0
 
       - name: Setup Python
         uses: actions/setup-python@v5
