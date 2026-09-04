@@ -2,8 +2,8 @@ name: Hot Wheels Drop Tracker
 
 on:
   schedule:
-    # Runs every hour (GitHub's cron uses UTC time)
-    - cron: '0 * * * *'
+    # Every hour from 07:00 through 12:00 IST = 01:30 through 06:30 UTC.
+    - cron: '30 1-6 * * *'
   workflow_dispatch: # Allows you to run it manually from the GitHub UI
 
 concurrency:
@@ -14,18 +14,14 @@ jobs:
   scrape-and-alert:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to commit the seen_products.json back to the repo
+      contents: write # Needed to commit the generated state file back to the repo
     
-    # Force the runner to use Node 24 for all actions to resolve deprecation warnings
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v5
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -36,7 +32,10 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DELIVERY_LATITUDE: ${{ secrets.DELIVERY_LATITUDE }}
+          DELIVERY_LONGITUDE: ${{ secrets.DELIVERY_LONGITUDE }}
           BLINKIT_HEADERS: ${{ secrets.BLINKIT_HEADERS }}
+          BLINKIT_BODY: ${{ secrets.BLINKIT_BODY }}
           ZEPTO_HEADERS: ${{ secrets.ZEPTO_HEADERS }}
           INSTAMART_HEADERS: ${{ secrets.INSTAMART_HEADERS }}
           ZEPTO_BODY: ${{ secrets.ZEPTO_BODY }}
@@ -51,7 +50,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add seen_products.json
+          git add listing_state.json
           # Only commit if the file has changed
           git diff --quiet && git diff --staged --quiet || git commit -m "chore: update seen products state [skip ci]"
           git push
