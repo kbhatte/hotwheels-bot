@@ -28,6 +28,18 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
+      - name: Validate Required Secrets
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DELIVERY_LATITUDE: ${{ secrets.DELIVERY_LATITUDE }}
+          DELIVERY_LONGITUDE: ${{ secrets.DELIVERY_LONGITUDE }}
+        run: |
+          test -n "$TELEGRAM_BOT_TOKEN" || { echo "::error::Missing TELEGRAM_BOT_TOKEN secret"; exit 1; }
+          test -n "$TELEGRAM_CHAT_ID" || { echo "::error::Missing TELEGRAM_CHAT_ID secret"; exit 1; }
+          test -n "$DELIVERY_LATITUDE" || { echo "::error::Missing DELIVERY_LATITUDE secret"; exit 1; }
+          test -n "$DELIVERY_LONGITUDE" || { echo "::error::Missing DELIVERY_LONGITUDE secret"; exit 1; }
+
       - name: Run Hot Wheels Tracker
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
