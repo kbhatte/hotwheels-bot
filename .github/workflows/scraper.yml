@@ -2,8 +2,8 @@ name: Hot Wheels Drop Tracker
 
 on:
   schedule:
-    # Every hour from 07:00 through 12:00 IST = 01:30 through 06:30 UTC.
-    - cron: '30 1-6 * * *'
+    # Every hour from 07:00 through 23:00 IST = 01:30 through 17:30 UTC.
+    - cron: '30 1-17 * * *'
   workflow_dispatch: # Allows you to run it manually from the GitHub UI
 
 concurrency:

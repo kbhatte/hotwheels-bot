@@ -45,7 +45,7 @@ The providers are independent. A failed or unconfigured provider does not mark i
 
 ## Schedule
 
-The workflow runs at 01:30 through 06:30 UTC, which is 07:00 through 12:00 IST. Use **Actions > Hot Wheels Drop Tracker > Run workflow** for a manual test.
+The workflow runs hourly at 01:30 through 17:30 UTC, which is 07:00 through 23:00 IST. GitHub Actions cron cannot run at 23:59 while also running hourly; the final hourly check is at 23:00 IST. Use **Actions > Hot Wheels Drop Tracker > Run workflow** for a manual test.
 
 ## Preserve the old version
 
