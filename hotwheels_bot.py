@@ -119,7 +119,14 @@ def check_provider(config: dict[str, Any], values: dict[str, str]) -> tuple[bool
         response = request(url, headers=headers, json=body if method == "POST" else None, timeout=20)
         response.raise_for_status()
         products = extract_products(response.json(), name, config.get("default_url", url))
-        print(f"{name}: found {len(products)} matching listings.")
+        available_count = sum(product["available"] for product in products)
+        print(
+            f"{name}: request succeeded ({response.status_code}); "
+            f"found {len(products)} matching listings, {available_count} available."
+        )
+        for product in products:
+            status = "AVAILABLE" if product["available"] else "UNAVAILABLE"
+            print(f"{name}: [{status}] {product['id']} - {product['title']}")
         return True, products
     except (requests.RequestException, ValueError) as error:
         print(f"{name} failed: {error}")
@@ -213,6 +220,8 @@ def main() -> None:
 
     if alerts:
         print(f"Found {len(alerts)} new or restocked available listings.")
+        for product in alerts:
+            print(f"Alert candidate: {product['provider']} - {product['title']} ({product['id']})")
         if not send_telegram(alerts):
             return
     else:

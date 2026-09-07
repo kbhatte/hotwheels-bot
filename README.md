@@ -47,6 +47,10 @@ The providers are independent. A failed or unconfigured provider does not mark i
 
 The workflow runs hourly at 01:30 through 17:30 UTC, which is 07:00 through 23:00 IST. GitHub Actions cron cannot run at 23:59 while also running hourly; the final hourly check is at 23:00 IST. Use **Actions > Hot Wheels Drop Tracker > Run workflow** for a manual test.
 
+## Viewing what was checked
+
+Open a workflow run, expand the `scrape-and-alert` job, and open the `Run Hot Wheels Tracker` step. The logs show each configured provider, HTTP success or failure, matching listing IDs, titles, availability, and alert candidates. Headers, tokens, coordinates, and raw API responses are never printed.
+
 ## Preserve the old version
 
 The previous implementation is preserved in the `legacy-old-scraper` branch:
