@@ -137,9 +137,12 @@ def providers() -> list[dict[str, Any]]:
     return [
         {
             "name": "Blinkit",
-            "url": "https://blinkit.com/v1/layout/search?q=hot+wheels",
+            "url": os.environ.get(
+                "BLINKIT_SEARCH_URL",
+                "https://blinkit.com/v1/layout/search?q=hot+wheels",
+            ),
             "headers": json_env("BLINKIT_HEADERS", {}),
-            "method": "POST",
+            "method": os.environ.get("BLINKIT_METHOD", "POST"),
             "body": json_env("BLINKIT_BODY", {}),
             "default_url": "https://blinkit.com",
         },

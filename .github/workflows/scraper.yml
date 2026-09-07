@@ -48,6 +48,8 @@ jobs:
           DELIVERY_LONGITUDE: ${{ secrets.DELIVERY_LONGITUDE }}
           BLINKIT_HEADERS: ${{ secrets.BLINKIT_HEADERS }}
           BLINKIT_BODY: ${{ secrets.BLINKIT_BODY }}
+          BLINKIT_SEARCH_URL: ${{ vars.BLINKIT_SEARCH_URL }}
+          BLINKIT_METHOD: ${{ vars.BLINKIT_METHOD }}
           ZEPTO_HEADERS: ${{ secrets.ZEPTO_HEADERS }}
           INSTAMART_HEADERS: ${{ secrets.INSTAMART_HEADERS }}
           ZEPTO_BODY: ${{ secrets.ZEPTO_BODY }}

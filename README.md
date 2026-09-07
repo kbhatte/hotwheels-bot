@@ -29,7 +29,7 @@ Add these repository secrets under **Settings > Secrets and variables > Actions 
 - `INSTAMART_HEADERS`
 - `INSTAMART_BODY` (only for a POST request)
 
-Add these as Actions variables when known: `ZEPTO_SEARCH_URL`, `ZEPTO_METHOD`, `INSTAMART_SEARCH_URL`, and `INSTAMART_METHOD`. Methods are `GET` or `POST`.
+Add these as Actions variables when known: `BLINKIT_SEARCH_URL`, `BLINKIT_METHOD`, `ZEPTO_SEARCH_URL`, `ZEPTO_METHOD`, `INSTAMART_SEARCH_URL`, and `INSTAMART_METHOD`. Methods are `GET` or `POST`. Blinkit defaults to its current search URL and `POST` if its variables are empty.
 
 URLs and JSON bodies may contain `${LATITUDE}`, `${LONGITUDE}`, and `${SEARCH_TERM}` placeholders. They are substituted only at runtime.
 
