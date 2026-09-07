@@ -64,5 +64,22 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add listing_state.json
           # Only commit if the file has changed
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: update seen products state [skip ci]"
-          git push
+          if git diff --staged --quiet; then
+            echo "State file did not change."
+            exit 0
+          fi
+          git commit -m "chore: update seen products state [skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin main; then
+              exit 0
+            fi
+            echo "Push attempt $attempt raced with another update; rebasing."
+            git fetch origin main
+            git rebase origin/main || {
+              echo "State update conflicted with another run. Retry the workflow."
+              git rebase --abort
+              exit 1
+            }
+          done
+          echo "Unable to push state after three attempts."
+          exit 1
