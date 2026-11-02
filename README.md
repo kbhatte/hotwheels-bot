@@ -1,6 +1,6 @@
 # Hot Wheels availability monitor
 
-This repository checks available Hot Wheels listings from Blinkit, Zepto, and Instamart during the configured morning window and sends Telegram alerts.
+This repository checks available Hot Wheels listings from Krazy Caterpillar, Toycra, and Instamart during the configured window and sends Telegram alerts. Blinkit and Zepto checks are paused because of IP blocking.
 
 ## Privacy
 
@@ -33,11 +33,13 @@ Add these as Actions variables when known: `BLINKIT_SEARCH_URL`, `BLINKIT_METHOD
 
 URLs and JSON bodies may contain `${LATITUDE}`, `${LONGITUDE}`, and `${SEARCH_TERM}` placeholders. They are substituted only at runtime.
 
+Krazy Caterpillar and Toycra use their public Shopify product-search endpoints and need no additional secrets or Actions variables. The bot searches for `SEARCH_TERM` (default: `hot wheels`) and tracks up to 10 matching products returned by each store.
+
 ## Capturing provider requests
 
 Use each provider website or app while the delivery location is selected. In browser developer tools, open **Network**, search for `hot wheels`, and identify the request returning product data. Copy its URL, method, request headers, and JSON body. Remove unnecessary tracking headers, then store the remaining JSON in the matching secret. Repeat when a provider changes its API.
 
-The providers are independent. A failed or unconfigured provider does not mark its old products unavailable.
+The providers are independent. A failed or unconfigured provider does not mark its old products unavailable. Blinkit and Zepto are explicitly paused and are not requested or marked unavailable; they can be re-enabled in `hotwheels_bot.py` after IP blocking is resolved.
 
 ## New and restocked listings
 

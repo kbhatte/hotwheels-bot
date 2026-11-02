@@ -2,6 +2,7 @@ import json
 import os
 from html import escape
 from typing import Any
+from urllib.parse import urlencode, urljoin
 
 import requests
 
@@ -39,6 +40,15 @@ def replace_placeholders(value: Any, values: dict[str, str]) -> Any:
     if isinstance(value, dict):
         return {key: replace_placeholders(item, values) for key, item in value.items()}
     return value
+
+
+def shopify_search_url(store_url: str) -> str:
+    query = urlencode({
+        "q": SEARCH_TERM,
+        "resources[type]": "product",
+        "resources[limit]": 10,
+    })
+    return f"{store_url.rstrip('/')}/search/suggest.json?{query}"
 
 
 def load_state() -> dict[str, dict[str, Any]]:
@@ -93,7 +103,10 @@ def extract_products(value: Any, provider: str, default_url: str) -> list[dict[s
             product = {
                 "id": f"{provider}:{product_id}",
                 "title": title,
-                "url": value.get("url") or value.get("product_url") or default_url,
+                "url": urljoin(
+                    default_url,
+                    str(value.get("url") or value.get("product_url") or default_url),
+                ),
                 "provider": provider,
                 "available": product_available(value),
             }
@@ -137,6 +150,7 @@ def providers() -> list[dict[str, Any]]:
     return [
         {
             "name": "Blinkit",
+            "enabled": False,
             "url": os.environ.get(
                 "BLINKIT_SEARCH_URL",
                 "https://blinkit.com/v1/layout/search?q=hot+wheels",
@@ -148,6 +162,7 @@ def providers() -> list[dict[str, Any]]:
         },
         {
             "name": "Zepto",
+            "enabled": False,
             "url": os.environ.get("ZEPTO_SEARCH_URL"),
             "headers": json_env("ZEPTO_HEADERS", {}),
             "method": os.environ.get("ZEPTO_METHOD", "GET"),
@@ -161,6 +176,20 @@ def providers() -> list[dict[str, Any]]:
             "method": os.environ.get("INSTAMART_METHOD", "GET"),
             "body": json_env("INSTAMART_BODY", {}),
             "default_url": "https://www.swiggy.com/instamart",
+        },
+        {
+            "name": "Krazy Caterpillar",
+            "url": shopify_search_url("https://krazycaterpillar.com"),
+            "headers": {"Accept": "application/json"},
+            "method": "GET",
+            "default_url": "https://krazycaterpillar.com",
+        },
+        {
+            "name": "Toycra",
+            "url": shopify_search_url("https://toycra.com"),
+            "headers": {"Accept": "application/json"},
+            "method": "GET",
+            "default_url": "https://toycra.com",
         },
     ]
 
@@ -203,6 +232,9 @@ def main() -> None:
     successful_providers: set[str] = set()
 
     for config in providers():
+        if not config.get("enabled", True):
+            print(f"Skipping {config['name']}: paused.")
+            continue
         success, products = check_provider(config, values)
         if success:
             successful_providers.add(config["name"])
